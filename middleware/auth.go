@@ -35,13 +35,14 @@ func Auth(ctx *fiber.Ctx) error {
 		return helpers.ApiResponse(ctx, fiber.StatusUnauthorized, "Unauthorized", nil)
 	}
 
-	userResource := resources.UserResource{
+	UserResourceWithRole := resources.UserResourceWithRole{
 		ID:        user.ID,
 		Name:      user.Name,
 		Email:     user.Email,
+		IsAdmin:   user.IsAdmin,
 		CreatedAt: user.CreatedAt,
 	}
-	ctx.Locals("user", userResource)
+	ctx.Locals("user", UserResourceWithRole)
 
 	return ctx.Next()
 }

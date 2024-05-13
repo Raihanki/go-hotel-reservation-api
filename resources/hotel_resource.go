@@ -10,7 +10,7 @@ type HotelResource struct {
 	Address     string    `json:"address"`
 	Photo       string    `json:"photo"`
 	Description string    `json:"description"`
-	Rating      string    `json:"rating"`
+	Rating      uint      `json:"rating"`
 	CreatedAt   time.Time `json:"created_at"`
 }
 

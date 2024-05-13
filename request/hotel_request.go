@@ -6,6 +6,6 @@ type HotelRequest struct {
 	City        string `json:"city" form:"city" validate:"required,min=3,max=199"`
 	Address     string `json:"address" form:"address" validate:"required,min=3,max=500"`
 	Photo       string `json:"photo" form:"photo"`
-	Description string `json:"description" form:"description" validate:"required,min=3 max=1000"`
-	Rating      string `json:"rating" form:"rating" validate:"min=1,max=5,number"`
+	Description string `json:"description" form:"description" validate:"required,min=3,max=1000"`
+	Rating      uint   `json:"rating" form:"rating" validate:"omitempty,min=1,max=5,number"`
 }

@@ -9,6 +9,7 @@ import (
 type Room struct {
 	ID          uint            `json:"id" gorm:"primaryKey"`
 	HotelID     uint            `json:"hotel_id" gorm:"not null,foreignKey:HotelID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
+	Hotel       Hotel           `json:"hotel"`
 	Name        string          `json:"name" gorm:"type:varchar(199);not null"`
 	Price       decimal.Decimal `json:"price" gorm:"type:decimal(10,2);not null"`
 	MaxPeople   int             `json:"max_people" gorm:"type:int;not null"`

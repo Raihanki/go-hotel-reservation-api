@@ -26,4 +26,13 @@ func Router(route *fiber.App) {
 	hotelRoute.Post("/", middleware.Auth, middleware.AuthenticatedAsAdmin, hotelController.Store)
 	hotelRoute.Put("/:id", middleware.Auth, middleware.AuthenticatedAsAdmin, hotelController.Update)
 	hotelRoute.Delete("/:id", middleware.Auth, middleware.AuthenticatedAsAdmin, hotelController.Destroy)
+
+	// Room Routes
+	roomController := controllers.NewRoomController(services.NewRoomService(configs.DB), services.NewHotelService(configs.DB))
+	roomRoute := app.Group("/hotels/:hotel_id/rooms")
+	roomRoute.Get("/", roomController.Index)
+	roomRoute.Get("/:id", roomController.Show)
+	roomRoute.Post("/", middleware.Auth, middleware.AuthenticatedAsAdmin, roomController.Store)
+	roomRoute.Put("/:id", middleware.Auth, middleware.AuthenticatedAsAdmin, roomController.Update)
+	roomRoute.Delete("/:id", middleware.Auth, middleware.AuthenticatedAsAdmin, roomController.Destroy)
 }

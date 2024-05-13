@@ -2,6 +2,7 @@ package services
 
 import (
 	"errors"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/Raihanki/go-hotel-reservation-api/models"
 	"github.com/Raihanki/go-hotel-reservation-api/request"
@@ -59,6 +60,7 @@ func (service *HotelService) GetHotelByID(hotelID int) (resources.HotelResource,
 		return resources.HotelResource{}, gorm.ErrRecordNotFound
 	}
 	if errHotel != nil {
+		log.Error("Error get hotel by ID : ", errHotel.Error())
 		return resources.HotelResource{}, errHotel
 	}
 

@@ -29,10 +29,24 @@ func Router(route *fiber.App) {
 
 	// Room Routes
 	roomController := controllers.NewRoomController(services.NewRoomService(configs.DB), services.NewHotelService(configs.DB))
-	roomRoute := app.Group("/hotels/:hotel_id/rooms")
+	roomNumberController := controllers.NewRoomNumberController(services.NewRoomNumberService(configs.DB), services.NewRoomService(configs.DB))
+	roomRoute := app.Group("/rooms")
 	roomRoute.Get("/", roomController.Index)
+	roomRoute.Get("/:room_id/numbers", roomNumberController.Index)
 	roomRoute.Get("/:id", roomController.Show)
 	roomRoute.Post("/", middleware.Auth, middleware.AuthenticatedAsAdmin, roomController.Store)
 	roomRoute.Put("/:id", middleware.Auth, middleware.AuthenticatedAsAdmin, roomController.Update)
 	roomRoute.Delete("/:id", middleware.Auth, middleware.AuthenticatedAsAdmin, roomController.Destroy)
+
+	// Room Number
+	roomNumberRoute := app.Group("/room-numbers")
+	roomNumberRoute.Post("/", middleware.Auth, middleware.AuthenticatedAsAdmin, roomNumberController.Store)
+	roomNumberRoute.Delete("/:id", middleware.Auth, middleware.AuthenticatedAsAdmin, roomNumberController.Destroy)
+
+	// Reservation Routes
+	reservationController := controllers.NewReservationController(services.NewReservationService(configs.DB), services.NewRoomNumberService(configs.DB))
+	reservationRoute := app.Group("/reservations")
+	reservationRoute.Get("/", middleware.Auth, reservationController.Index)
+	reservationRoute.Get("/:id", middleware.Auth, reservationController.Show)
+	reservationRoute.Post("/", middleware.Auth, reservationController.Store)
 }

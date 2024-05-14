@@ -30,7 +30,10 @@ func NewRoomController(roomService services.RoomServiceInterface, hotelService s
 }
 
 func (controller *RoomController) Index(ctx *fiber.Ctx) error {
-	idHotelParam := ctx.Params("hotel_id")
+	idHotelParam := ctx.Query("hotel_id")
+	if idHotelParam == "" {
+		return helpers.ApiResponse(ctx, fiber.StatusBadRequest, "hotel_id is required as query param", nil)
+	}
 	idHotel, _ := strconv.Atoi(idHotelParam)
 
 	// check id hotel
@@ -54,19 +57,7 @@ func (controller *RoomController) Show(ctx *fiber.Ctx) error {
 	paramsId := ctx.Params("id")
 	idRoom, _ := strconv.Atoi(paramsId)
 
-	idHotelParam := ctx.Params("hotel_id")
-	idHotel, _ := strconv.Atoi(idHotelParam)
-
-	// check id hotel
-	_, errHotel := controller.hotelService.GetHotelByID(idHotel)
-	if errors.Is(errHotel, gorm.ErrRecordNotFound) {
-		return helpers.ApiResponse(ctx, fiber.StatusBadRequest, "Hotel not found", nil)
-	}
-	if errHotel != nil {
-		return helpers.ApiResponse(ctx, fiber.StatusInternalServerError, "Failed to get hotel", nil)
-	}
-
-	roomResource, errRoom := controller.roomService.GetRoomByID(idHotel, idRoom)
+	roomResource, errRoom := controller.roomService.GetRoomByID(idRoom)
 	if errors.Is(errRoom, gorm.ErrRecordNotFound) {
 		return helpers.ApiResponse(ctx, fiber.StatusNotFound, "Room not found", nil)
 	}
@@ -115,18 +106,6 @@ func (controller *RoomController) Update(ctx *fiber.Ctx) error {
 	idParams := ctx.Params("id")
 	roomID, _ := strconv.Atoi(idParams)
 
-	idHotelParam := ctx.Params("hotel_id")
-	idHotel, _ := strconv.Atoi(idHotelParam)
-
-	// check id hotel
-	_, errHotel := controller.hotelService.GetHotelByID(idHotel)
-	if errors.Is(errHotel, gorm.ErrRecordNotFound) {
-		return helpers.ApiResponse(ctx, fiber.StatusBadRequest, "Hotel not found", nil)
-	}
-	if errHotel != nil {
-		return helpers.ApiResponse(ctx, fiber.StatusInternalServerError, "Failed to get hotel", nil)
-	}
-
 	roomRequest := request.RoomRequest{}
 	errBody := ctx.BodyParser(&roomRequest)
 	if errBody != nil {
@@ -147,7 +126,7 @@ func (controller *RoomController) Update(ctx *fiber.Ctx) error {
 	}
 
 	//check room
-	_, errRoom := controller.roomService.GetRoomByID(idHotel, roomID)
+	_, errRoom := controller.roomService.GetRoomByID(roomID)
 	if errors.Is(errRoom, gorm.ErrRecordNotFound) {
 		return helpers.ApiResponse(ctx, fiber.StatusBadRequest, "Room not found", nil)
 	}
@@ -176,19 +155,7 @@ func (controller *RoomController) Destroy(ctx *fiber.Ctx) error {
 	idParam := ctx.Params("id")
 	roomID, _ := strconv.Atoi(idParam)
 
-	idHotelParam := ctx.Params("hotel_id")
-	idHotel, _ := strconv.Atoi(idHotelParam)
-
-	// check id hotel
-	_, errHotel := controller.hotelService.GetHotelByID(idHotel)
-	if errors.Is(errHotel, gorm.ErrRecordNotFound) {
-		return helpers.ApiResponse(ctx, fiber.StatusBadRequest, "Hotel not found", nil)
-	}
-	if errHotel != nil {
-		return helpers.ApiResponse(ctx, fiber.StatusInternalServerError, "Failed to get hotel", nil)
-	}
-
-	rowsAffected, errRoom := controller.roomService.DeleteRoomByID(idHotel, roomID)
+	rowsAffected, errRoom := controller.roomService.DeleteRoomByID(roomID)
 	if rowsAffected == 0 {
 		return helpers.ApiResponse(ctx, fiber.StatusBadRequest, "Room not found", nil)
 	}

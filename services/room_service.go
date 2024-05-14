@@ -12,9 +12,9 @@ import (
 
 type RoomServiceInterface interface {
 	CreateRoom(roomRequest request.RoomRequest) (resources.RoomResource, error)
-	GetRoomByID(hotelID int, roomID int) (resources.RoomResource, error)
+	GetRoomByID(roomID int) (resources.RoomResource, error)
 	UpdateRoomByID(roomRequest request.RoomRequest, roomID int) error
-	DeleteRoomByID(hotelId int, roomID int) (int, error)
+	DeleteRoomByID(roomID int) (int, error)
 	GetAllRooms(hotelID int) ([]resources.RoomResource, error)
 }
 
@@ -62,9 +62,9 @@ func (service *RoomService) CreateRoom(roomRequest request.RoomRequest) (resourc
 	return roomResource, nil
 }
 
-func (service *RoomService) GetRoomByID(hotelID int, roomID int) (resources.RoomResource, error) {
+func (service *RoomService) GetRoomByID(roomID int) (resources.RoomResource, error) {
 	room := models.Room{}
-	errRoom := service.DB.Where("hotel_id = ?", hotelID).Where("rooms.id = ?", roomID).Joins("Hotel").First(&room).Error
+	errRoom := service.DB.Where("rooms.id = ?", roomID).Joins("Hotel").First(&room).Error
 	if errors.Is(errRoom, gorm.ErrRecordNotFound) {
 		return resources.RoomResource{}, gorm.ErrRecordNotFound
 	}
@@ -106,9 +106,9 @@ func (service *RoomService) UpdateRoomByID(roomRequest request.RoomRequest, room
 	return nil
 }
 
-func (service *RoomService) DeleteRoomByID(hotelID int, roomID int) (int, error) {
+func (service *RoomService) DeleteRoomByID(roomID int) (int, error) {
 	room := models.Room{}
-	deleteRoom := service.DB.Where("hotel_id = ?", hotelID).Where("id = ?", roomID).Delete(&room)
+	deleteRoom := service.DB.Where("id = ?", roomID).Delete(&room)
 	if deleteRoom.Error != nil {
 		log.Error("Error get room by ID : ", deleteRoom.Error.Error())
 		return 0, deleteRoom.Error

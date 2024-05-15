@@ -21,6 +21,8 @@ type Config struct {
 	DB_PASSWORD   string
 
 	JWT_SECRET string
+
+	STRIPE_KEY string
 }
 
 var ENV *Config
